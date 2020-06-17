@@ -5,12 +5,10 @@
  * Released under the MIT License
  * Released on: 2019-06-21 23:06:27
  */
-
-
 (function (global, factory) {
   typeof exports === 'object' && typeof module !== 'undefined' ? module.exports = factory() :
-    typeof define === 'function' && define.amd ? define(factory) :
-      (global = global || self, global.ZxEditor = factory());
+  typeof define === 'function' && define.amd ? define(factory) :
+  (global = global || self, global.ZxEditor = factory());
 }(this, function () { 'use strict';
 
   function _typeof(obj) {
@@ -1162,8 +1160,8 @@
       }
 
       var eventType = args[0],
-        fn = args[1],
-        useCapture = args[2];
+          fn = args[1],
+          useCapture = args[2];
       var el;
 
       for (var i = 0; i < this.length; i++) {
@@ -1182,8 +1180,8 @@
       }
 
       var eventType = args[0],
-        fn = args[1],
-        useCapture = args[2];
+          fn = args[1],
+          useCapture = args[2];
       var el;
 
       for (var i = 0; i < this.length; i++) {
@@ -2082,7 +2080,7 @@
      * image file handler
      * *******************************************
      */
-      // select picture
+    // select picture
 
     var $selectPictureLabel = $('<label class="toolbar-icon-pic" style="position:absolute;top:0;left:0;width:100%;height:100%;"></label>');
     var $selectPictrueInput = $('<input type="file" accept="image/*" style="display:none">');
@@ -2114,48 +2112,19 @@
 
         if (options.customPictureHandler) return; // handler picture
 
-        let fd = new FormData()
-        let ciId = '1248190932898238465'
-        fd.append("file", file)
-         fd.append("ciId",ciId)
-        let xhr = new XMLHttpRequest();
+        _this.fileToBase64(file, imageOptions).then(function (res) {
+          // console.log(res)
+          var $el = $(imageSectionTemplate.replace('{url}', res.base64)); // set attribute
 
-        xhr.open('post', "https://restc.juzhongvip.com/customer-myself/store-file/upload-pic", true);
-        xhr.setRequestHeader('Content-Type', 'multipart/form-data')
-        xhr.setRequestHeader('AccessToken', ciId)
-        xhr.upload.onprogress = function (e) {
-          if (e.lengthComputable) {
-            let percentage = (e.loaded / e.total) * 100;
-          }
-        };
+          $el.find('img').attr({
+            id: 'zxEditor_img_' + +new Date(),
+            alt: file.name
+          }); // insert to $content
 
-        // xhr.onerror = function(e) {
-        //   console.error('An error occurred while submitting the form. Maybe your file is too big');
-        //   layer.msg('An error occurred while submitting the form. Maybe your file is too big',{time:1500});
-        //   return;
-        // };
-
-        xhr.onload = function () {
-          if (xhr.status === 200) {
-            let obj = JSON.parse(xhr.responseText);
-            if (obj.code == '0000') {
-
-              let $el = $(imageSectionTemplate.replace('{url}', obj.data.url))
-              $el.find('img').attr({
-                id: 'zxEditor_img_' + (+new Date()),
-                alt: file.name
-              })
-              // insert to $content
-              _this.insertElm($el)
-            } else {
-
-            }
-            //showImage(obj.files[0]);
-          } else {
-            console.error('Something went terribly wrong...');
-          }
-        };
-        xhr.send(fd)
+          _this.insertElm($el);
+        })["catch"](function (e) {
+          _this.emit('error', e, 'fileToBase64');
+        });
       },
       capture: false
     };
@@ -2357,7 +2326,7 @@
      * append style
      * *****************************************
      */
-      // main color
+    // main color
     var style = ".zx-editor .m-color{color:".concat(options.mainColor, " !important;}.zx-editor .text-style-outer-wrapper .__tag-wrapper dd i {border-color:").concat(options.mainColor, " !important;}"); // line-height, caret-color
 
     if (options.lineHeight || options.cursorColor || options.textColor) {
@@ -2881,24 +2850,24 @@
         sy = util["int"]((sh - targetHeight) / 2 * scaling);
       } // To satisfy the clipping requirement, we need to resize: image height === clipping frame height
       else {
-        scaling = ratio(ih, targetHeight);
-        sw = Math.floor(targetHeight * iw / ih);
-        sh = targetHeight;
-        sx = util["int"]((sw - targetWidth) / 2 * scaling);
-        sy = 0;
-      }
+          scaling = ratio(ih, targetHeight);
+          sw = Math.floor(targetHeight * iw / ih);
+          sh = targetHeight;
+          sx = util["int"]((sw - targetWidth) / 2 * scaling);
+          sy = 0;
+        }
     } // Zoom Picture Code **********************************
     // Only width is set
     else if (targetWidth > 0) {
-      scaling = ratio(iw, targetWidth);
-      canvasWidth = targetWidth;
-      canvasHieght = Math.floor(targetWidth * ih / iw);
-    } // Only height is set
-    else if (targetHeight > 0) {
-      scaling = ratio(ih, targetHeight);
-      canvasWidth = Math.floor(targetHeight * iw / ih);
-      canvasHieght = targetHeight;
-    }
+        scaling = ratio(iw, targetWidth);
+        canvasWidth = targetWidth;
+        canvasHieght = Math.floor(targetWidth * ih / iw);
+      } // Only height is set
+      else if (targetHeight > 0) {
+          scaling = ratio(ih, targetHeight);
+          canvasWidth = Math.floor(targetHeight * iw / ih);
+          canvasHieght = targetHeight;
+        }
 
     return {
       sx: sx,
@@ -3322,47 +3291,47 @@
        * 插入元素为：非文本
        */
       else {
-        var $el = $(el);
-        var $elm;
+          var $el = $(el);
+          var $elm;
 
-        for (var i = 0; i < $el.length; i++) {
-          $elm = $($el[i]);
-          var nodeName = $elm.nodeName(); // SECTION
+          for (var i = 0; i < $el.length; i++) {
+            $elm = $($el[i]);
+            var nodeName = $elm.nodeName(); // SECTION
 
-          if (nodeName !== 'section') {
-            if ($elm.nodeType() === 1 && !/video|img|audio/.test(nodeName)) {
-              $elm.changeNodeName('section');
-            } else {
-              var $tmp = $("<section></section>");
-              $elm = $tmp.append($elm);
+            if (nodeName !== 'section') {
+              if ($elm.nodeType() === 1 && !/video|img|audio/.test(nodeName)) {
+                $elm.changeNodeName('section');
+              } else {
+                var $tmp = $("<section></section>");
+                $elm = $tmp.append($elm);
+              }
             }
-          }
 
-          if ($cursorNode.isEmpty()) {
-            // siblings is empty
-            if ($cursorNode.next()[0] && $cursorNode.next().isEmpty()) {
-              $cursorNode.replace($elm);
+            if ($cursorNode.isEmpty()) {
+              // siblings is empty
+              if ($cursorNode.next()[0] && $cursorNode.next().isEmpty()) {
+                $cursorNode.replace($elm);
+              } else {
+                $elm.insertBefore($cursorNode);
+              }
             } else {
-              $elm.insertBefore($cursorNode);
+              $elm.insertAfter($cursorNode);
+            } // 判断$el是否有下一个节点，有：光标指向el结束，无：则插入空行，并移动光标
+
+
+            var next = $elm.next()[0];
+
+            if (next) {
+              newRangeEl = $elm;
+              newRangeOffset = $elm.isTextNode() ? $elm.text().length : 0;
+            } else {
+              var $section = $("<section><br></section>");
+              this.$content.append($section);
+              newRangeEl = $section;
+              newRangeOffset = 0;
             }
-          } else {
-            $elm.insertAfter($cursorNode);
-          } // 判断$el是否有下一个节点，有：光标指向el结束，无：则插入空行，并移动光标
-
-
-          var next = $elm.next()[0];
-
-          if (next) {
-            newRangeEl = $elm;
-            newRangeOffset = $elm.isTextNode() ? $elm.text().length : 0;
-          } else {
-            var $section = $("<section><br></section>");
-            this.$content.append($section);
-            newRangeEl = $section;
-            newRangeOffset = 0;
           }
         }
-      }
 
       this._checkChildSection();
 
