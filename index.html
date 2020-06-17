@@ -28,15 +28,15 @@
 
   zxEditor.on('selectPictureInputChange', function (file, ze, e) {
     //console.log(file, ze, e)
-
-
+ var imageOptions = Object.assign({}, zxEditor.options, {
+        width: zxEditor.options.imageMaxWidth
+      });
+ console.log(zxEditor.fileToBase64(file, imageOptions))
    var u = navigator.userAgent.toLowerCase();
       var isApple = /(iphone|ipad|ipod|ios)/i.test(u);
       var isAndroid = /android/i.test(u);
-      var imageOptions = Object.assign({}, zxEditor.options, {
-        width: zxEditor.options.imageMaxWidth
-      });
-      console.log(zxEditor.fileToBase64(file, imageOptions))
+     
+     
       if(isApple) {
         window.webkit.messageHandlers.printPic.postMessage(zxEditor.fileToBase64(file, imageOptions));
       } else {
