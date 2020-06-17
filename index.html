@@ -7,18 +7,58 @@
 
 <body>
 
-<link rel="stylesheet" href="./zx-editor/dist/css/zx-editor.css">
+<link rel="stylesheet" href="./dist/css/zx-editor.min.css">
 <div id="editorContainer">
+  <!-- 编辑器容器 -->
 </div>
-<script src="./zx-editor/dist/js/zx-editor.js"></script>
+<script src="./dist/js/zx-editor.min.js"></script>
 <script>
   // 初始化ZX编辑器
   var zxEditor = new ZxEditor('#editorContainer', {
-    placeholder: '请输入内容'
+    editable: true,
+    // placeholder: '自定义placeholder',
+    // lineHeight: 1,
+    // padding: '0 0 30px',
+    // placeholderColor: 'red',
+    cursorColor: 'red',
+    // 禁用图片自动处理
+    customPictureHandler: true
   })
 
+  zxEditor.on('selectPictureInputChange', function (file, ze, e) {
+    //console.log(file, ze, e)
 
-  function getHtml() {
+
+    uploadFile(file)
+  })
+
+  function uploadFile(file) {
+    return new Promise(function (resolve, reject) {
+      var u = navigator.userAgent.toLowerCase();
+      var isApple = /(iphone|ipad|ipod|ios)/i.test(u);
+      var isAndroid = /android/i.test(u);
+      var imageOptions = Object.assign({}, zxEditor.options, {
+        width: zxEditor.options.imageMaxWidth
+      });
+
+      if(isApple) {
+        window.webkit.messageHandlers.printPic.postMessage(zxEditor.fileToBase64(file, imageOptions));
+      } else {
+        Jzyp.printPic(zxEditor.fileToBase64(file, imageOptions))
+      }
+      let url='';
+
+    })
+  }
+
+  function upPicSuccess(url) {
+    let img = new Image()
+    img.src = url
+    zxEditor.insertElm(img)
+  }
+
+
+  function gethtml() {
     var u = navigator.userAgent.toLowerCase();
     var isApple = /(iphone|ipad|ipod|ios)/i.test(u);
     var isAndroid = /android/i.test(u);
