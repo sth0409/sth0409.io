@@ -20,6 +20,7 @@
     // lineHeight: 1,
     // padding: '0 0 30px',
     // placeholderColor: 'red',
+    toolbarHeight:200,
     cursorColor: 'red',
     // 禁用图片自动处理
     customPictureHandler: true
@@ -29,28 +30,21 @@
     //console.log(file, ze, e)
 
 
-    uploadFile(file)
-  })
-
-  function uploadFile(file) {
-    return new Promise(function (resolve, reject) {
-      var u = navigator.userAgent.toLowerCase();
+   var u = navigator.userAgent.toLowerCase();
       var isApple = /(iphone|ipad|ipod|ios)/i.test(u);
       var isAndroid = /android/i.test(u);
       var imageOptions = Object.assign({}, zxEditor.options, {
         width: zxEditor.options.imageMaxWidth
       });
-
+      console.log(zxEditor.fileToBase64(file, imageOptions))
       if(isApple) {
         window.webkit.messageHandlers.printPic.postMessage(zxEditor.fileToBase64(file, imageOptions));
       } else {
         Jzyp.printPic(zxEditor.fileToBase64(file, imageOptions))
       }
-      let url='';
+  })
 
-    })
-  }
-
+  
   function upPicSuccess(url) {
     let img = new Image()
     img.src = url
