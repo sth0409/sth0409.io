@@ -24,7 +24,7 @@
     toolbarHeight:200,
     cursorColor: 'red',
     // 禁用图片自动处理
-    imageSectionTemp:'<section class="child-is-picture"><img src="http://a2.att.hudong.com/36/48/19300001357258133412489354717.jpg"></section>'
+<!--    imageSectionTemp:'<section class="child-is-picture"><img src="http://a2.att.hudong.com/36/48/19300001357258133412489354717.jpg"></section>'-->
      customPictureHandler: true
   })
   //
@@ -40,11 +40,12 @@
       var isAndroid = /android/i.test(u);
 
       console.log(base64)
-      if(isApple) {
-        window.webkit.messageHandlers.printPic.postMessage(base64);
-      } else {
-        Jzyp.printPic(base64)
-      }
+<!--      if(isApple) {-->
+<!--        window.webkit.messageHandlers.printPic.postMessage(base64);-->
+<!--      } else {-->
+<!--        Jzyp.printPic(base64)-->
+<!--      }-->
+      upPicSuccess("http://a2.att.hudong.com/36/48/19300001357258133412489354717.jpg")
     })
 
     });
@@ -55,6 +56,7 @@
     let img = new Image()
     img.src = url
     zxEditor.insertElm(img)
+     console.log(zxEditor.getHtml())
   }
 
 
