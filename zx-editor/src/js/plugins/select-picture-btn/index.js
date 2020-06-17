@@ -48,55 +48,52 @@ export function selectPictureBtn() {
       if (options.customPictureHandler) return
 
       // handler picture
-      _this.fileToBase64(file, imageOptions).then(res => {
-        // console.log(res)
-        let fd = new FormData()
-        let ciId='1248190932898238465'
-        fd.append("files", file)
-        // fd.append("ciId","")
-        let xhr = new XMLHttpRequest();
-        xhr.setRequestHeader('Content-Type','multipart/form-data')
-        xhr.setRequestHeader('AccessToken',ciId)
-        xhr.open('post', "http://110.249.209.202:46979/customer-myself/store-file/upload-pic?ciId="+ciId, true);
 
-        xhr.upload.onprogress = function (e) {
-          if (e.lengthComputable) {
-            let percentage = (e.loaded / e.total) * 100;
-          }
-        };
+      // console.log(res)
+      let fd = new FormData()
+      let ciId = '1248190932898238465'
+      fd.append("files", file)
+      // fd.append("ciId","")
+      let xhr = new XMLHttpRequest();
+      xhr.setRequestHeader('Content-Type', 'multipart/form-data')
+      xhr.setRequestHeader('AccessToken', ciId)
+      xhr.open('post', "http://110.249.209.202:46979/customer-myself/store-file/upload-pic?ciId=" + ciId, true);
 
-        // xhr.onerror = function(e) {
-        //   console.error('An error occurred while submitting the form. Maybe your file is too big');
-        //   layer.msg('An error occurred while submitting the form. Maybe your file is too big',{time:1500});
-        //   return;
-        // };
+      xhr.upload.onprogress = function (e) {
+        if (e.lengthComputable) {
+          let percentage = (e.loaded / e.total) * 100;
+        }
+      };
 
-        xhr.onload = function () {
-          if (xhr.status === 200) {
-            let obj = JSON.parse(xhr.responseText);
-            if (obj.code == '0000') {
+      // xhr.onerror = function(e) {
+      //   console.error('An error occurred while submitting the form. Maybe your file is too big');
+      //   layer.msg('An error occurred while submitting the form. Maybe your file is too big',{time:1500});
+      //   return;
+      // };
 
-              let $el = $(imageSectionTemplate.replace('{url}', obj.data.url))
-              $el.find('img').attr({
-                id: 'zxEditor_img_' + (+new Date()),
-                alt: file.name
-              })
-              // insert to $content
-              _this.insertElm($el)
-            } else {
+      xhr.onload = function () {
+        if (xhr.status === 200) {
+          let obj = JSON.parse(xhr.responseText);
+          if (obj.code == '0000') {
 
-            }
-            //showImage(obj.files[0]);
+            let $el = $(imageSectionTemplate.replace('{url}', obj.data.url))
+            $el.find('img').attr({
+              id: 'zxEditor_img_' + (+new Date()),
+              alt: file.name
+            })
+            // insert to $content
+            _this.insertElm($el)
           } else {
-            console.error('Something went terribly wrong...');
+
           }
-        };
-        xhr.send(fd);
+          //showImage(obj.files[0]);
+        } else {
+          console.error('Something went terribly wrong...');
+        }
+      };
+      xhr.send(fd);
 
 
-      }).catch(e => {
-        _this.emit('error', e, 'fileToBase64')
-      })
     },
     capture: false
   }
