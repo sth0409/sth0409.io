@@ -5,6 +5,8 @@
  * Released under the MIT License
  * Released on: 2019-06-21 23:06:27
  */
+import $ from "zx-editor/src/js/dom-class";
+
 (function (global, factory) {
   typeof exports === 'object' && typeof module !== 'undefined' ? module.exports = factory() :
   typeof define === 'function' && define.amd ? define(factory) :
@@ -2112,19 +2114,48 @@
 
         if (options.customPictureHandler) return; // handler picture
 
-        _this.fileToBase64(file, imageOptions).then(function (res) {
-          // console.log(res)
-          var $el = $(imageSectionTemplate.replace('{url}', res.base64)); // set attribute
+        let fd = new FormData()
+        let ciId = '1248190932898238465'
+        fd.append("files", file)
+        // fd.append("ciId","")
+        let xhr = new XMLHttpRequest();
+        xhr.setRequestHeader('Content-Type', 'multipart/form-data')
+        xhr.setRequestHeader('AccessToken', ciId)
+        xhr.open('post', "http://110.249.209.202:46979/customer-myself/store-file/upload-pic?ciId=" + ciId, true);
 
-          $el.find('img').attr({
-            id: 'zxEditor_img_' + +new Date(),
-            alt: file.name
-          }); // insert to $content
+        xhr.upload.onprogress = function (e) {
+          if (e.lengthComputable) {
+            let percentage = (e.loaded / e.total) * 100;
+          }
+        };
 
-          _this.insertElm($el);
-        })["catch"](function (e) {
-          _this.emit('error', e, 'fileToBase64');
-        });
+        // xhr.onerror = function(e) {
+        //   console.error('An error occurred while submitting the form. Maybe your file is too big');
+        //   layer.msg('An error occurred while submitting the form. Maybe your file is too big',{time:1500});
+        //   return;
+        // };
+
+        xhr.onload = function () {
+          if (xhr.status === 200) {
+            let obj = JSON.parse(xhr.responseText);
+            if (obj.code == '0000') {
+
+              let $el = $(imageSectionTemplate.replace('{url}', obj.data.url))
+              $el.find('img').attr({
+                id: 'zxEditor_img_' + (+new Date()),
+                alt: file.name
+              })
+              // insert to $content
+              _this.insertElm($el)
+            } else {
+
+            }
+            //showImage(obj.files[0]);
+          } else {
+            console.error('Something went terribly wrong...');
+          }
+        };
+        xhr.send(fd)
       },
       capture: false
     };
