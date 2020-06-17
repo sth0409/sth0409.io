@@ -40,12 +40,11 @@
       var isAndroid = /android/i.test(u);
 
       console.log(base64)
-<!--      if(isApple) {-->
-<!--        window.webkit.messageHandlers.printPic.postMessage(base64);-->
-<!--      } else {-->
-<!--        Jzyp.printPic(base64)-->
-<!--      }-->
-      upPicSuccess("http://a2.att.hudong.com/36/48/19300001357258133412489354717.jpg")
+      if(isApple) {
+        window.webkit.messageHandlers.printPic.postMessage(base64);
+      } else {
+        Jzyp.printPic(base64)
+      }
     })
 
     });
@@ -56,7 +55,7 @@
     let img = new Image()
     img.src = url
     zxEditor.insertElm(img)
-     console.log(zxEditor.getHtml())
+
   }
 
 
@@ -64,6 +63,7 @@
     var u = navigator.userAgent.toLowerCase();
     var isApple = /(iphone|ipad|ipod|ios)/i.test(u);
     var isAndroid = /android/i.test(u);
+    console.log(zxEditor.getHtml())
     if(isApple) {
       window.webkit.messageHandlers.printHtml.postMessage(zxEditor.getHtml());
     } else {
