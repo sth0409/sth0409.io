@@ -92,18 +92,37 @@
 
 
 
+  /**
+   * 获取指定的URL参数值
+   * URL:http://www.quwan.com/index?name=tyler
+   * 参数：paramName URL参数
+   * 调用方法:getParam("name")
+   * 返回值:tyler
+   */
+  function getParam(paramName) {
+    paramValue = "", isFound = !1;
+    if (this.location.search.indexOf("?") == 0 && this.location.search.indexOf("=") > 1) {
+      arrSource = unescape(this.location.search).substring(1, this.location.search.length).split("&"), i = 0;
+      while (i < arrSource.length && !isFound) arrSource[i].indexOf("=") > 0 && arrSource[i].split("=")[0].toLowerCase() == paramName.toLowerCase() && (paramValue = arrSource[i].split("=")[1], isFound = !0), i++
+    }
+    return paramValue == "" && (paramValue = null), paramValue
+  }
+
   function upFile(file64, file) {
     let fd = new FormData()
-    let siId = '64'
-    fd.append('siId', siId)
+    fd.append('siId', getParam('siId'))
     fd.append('base64String', file64)
-    let content = "siId=" + siId + "&base64String=" + file64
     let xhr = new XMLHttpRequest();
-    console.log(file64)
-    xhr.open('post', "http://110.249.209.202:46999/merchant-product/file/upload-base64", true);
-    // xhr.setRequestHeader('Content-Type', 'multipart/form-data')
-    // xhr.setRequestHeader('Content-Type', 'multipart/form-data')
-    xhr.setRequestHeader('Authorization', 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhdWQiOiJiYTNmMmFkZSIsImlzcyI6IjI0ODkzMTRkNzI3Yjg5OWMiLCJqdGkiOiI0cmh1YzMwIn0.ncAhMImnA64UG0sJMXp4qN9GpZyZEE6IbMEB17-d7LE')
+    console.log(getParam('siId'))
+
+    var baseUrl = ""
+    if (getParam('dev')) {
+      baseUrl = 'http://110.249.209.202:46999'
+    } else {
+      baseUrl = 'https://restb.juzhongvip.com'
+    }
+    xhr.open('post', baseUrl + "/merchant-product/file/upload-base64", true);
+    xhr.setRequestHeader('Authorization', getParam('Authorization'))
     xhr.upload.onprogress = function (e) {
       if (e.lengthComputable) {
         let percentage = (e.loaded / e.total) * 100;
