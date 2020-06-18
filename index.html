@@ -1,53 +1,95 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>Title</title>
+  <meta http-equiv="X-UA-Compatible" content="IE=Edge,chrome=1">
+  <meta name="viewport" content="width=device-width,initial-scale=1.0">
+  <title>ZxEditor - 移动端H5富文本编辑器</title>
+  <link rel="stylesheet" href="./dist/css/zx-editor.css">
+  <style>
+    body {
+      margin: 0;
+      padding: 0;
+    }
+    #editorContainer {
+      padding: 15px;
+      /*box-sizing: border-box;*/
+    }
+  </style>
 </head>
-
 <body>
+<div id="editorContainer"></div>
 
-<link rel="stylesheet" href="./zx-editor/dist/css/zx-editor.min.css">
-<div id="editorContainer">
-  <!-- 编辑器容器 -->
-</div>
-<script src="./imgfile2base64/index.js"></script>
-<script src="./zx-editor/dist/js/zx-editor.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/js-polyfills/0.1.42/polyfill.min.js"></script>
+<!--exif获取照片参数插件-->
+<script src="./demo/libs/exif.min.js"></script>
+<!--debug-->
+<script src="https://cdn.bootcss.com/vConsole/3.2.0/vconsole.min.js"></script>
+<!--编辑器-->
+<script src="./dist/js/zx-editor.js"></script>
 <script>
-  // 初始化ZX编辑器
+  // 实例化 ZxEditor
   var zxEditor = new ZxEditor('#editorContainer', {
     editable: true,
     // placeholder: '自定义placeholder',
     // lineHeight: 1,
     // padding: '0 0 30px',
     // placeholderColor: 'red',
-//     toolbarHeight:200,
-    cursorColor: 'red',
-    // 禁用图片自动处理
-<!--    imageSectionTemp:'<section class="child-is-picture"><img src="http://a2.att.hudong.com/36/48/19300001357258133412489354717.jpg"></section>'-->
-//      customPictureHandler: true
+    cursorColor: 'red'
   })
-  //
-//   zxEditor.on('selectPictureInputChange', function (file, ze, e) {
-//     console.log(file)
-//     var imageOptions = Object.assign({}, zxEditor.options, {
-//       width: zxEditor.options.imageMaxWidth
-//     });
 
-//     imgfile2base64(file, function (base64) {
-//       var u = navigator.userAgent.toLowerCase();
-//       var isApple = /(iphone|ipad|ipod|ios)/i.test(u);
-//       var isAndroid = /android/i.test(u);
+  // 实例化 VConsole
+  new VConsole()
 
-//       console.log(base64)
-//       if(isApple) {
-//         window.webkit.messageHandlers.printPic.postMessage(base64);
-//       } else {
-//         Jzyp.printPic(base64)
-//       }
-//     })
+  // console.log(debug)
 
-//     });
+  console.log('实例化 ZxEditor', zxEditor);
+
+  zxEditor.on('change', function () {
+    // console.log('change input')
+  })
+
+  zxEditor.on('paste', function (e) {
+    console.log('paste', e)
+  })
+
+  zxEditor.on('keydown', function () {
+    // console.log('keydown')
+  })
+
+  zxEditor.on('keyup', function () {
+    // console.log('keyup')
+  })
+
+  zxEditor.on('selectPictureInputChange', function (file, ze, e) {
+    // console.log(file, ze, e)
+  })
+
+  zxEditor.on('error', function (e, methodName) {
+    console.log(methodName)
+    console.error(e)
+  })
+   zxEditor.on('selectPictureInputChange', function (file, ze, e) {
+     console.log(file)
+     var imageOptions = Object.assign({}, zxEditor.options, {
+       width: zxEditor.options.imageMaxWidth
+     });
+
+     imgfile2base64(file, function (base64) {
+       var u = navigator.userAgent.toLowerCase();
+       var isApple = /(iphone|ipad|ipod|ios)/i.test(u);
+       var isAndroid = /android/i.test(u);
+
+       console.log(base64)
+       if(isApple) {
+         window.webkit.messageHandlers.printPic.postMessage(base64);
+       } else {
+         Jzyp.printPic(base64)
+       }
+     })
+
+     });
 
 
 
@@ -70,7 +112,9 @@
       Jzyp.printHtml(zxEditor.getHtml())
     }
   }
+  zxEditor.on('windowResize', function () {
+    console.error('windowResize', window.innerHeight)
+  })
 </script>
 </body>
-
 </html>
