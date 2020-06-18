@@ -28,26 +28,26 @@
      customPictureHandler: true
   })
   //
-  zxEditor.on('selectPictureInputChange', function (file, ze, e) {
-    console.log(file)
-    var imageOptions = Object.assign({}, zxEditor.options, {
-      width: zxEditor.options.imageMaxWidth
-    });
+//   zxEditor.on('selectPictureInputChange', function (file, ze, e) {
+//     console.log(file)
+//     var imageOptions = Object.assign({}, zxEditor.options, {
+//       width: zxEditor.options.imageMaxWidth
+//     });
 
-    imgfile2base64(file, function (base64) {
-      var u = navigator.userAgent.toLowerCase();
-      var isApple = /(iphone|ipad|ipod|ios)/i.test(u);
-      var isAndroid = /android/i.test(u);
+//     imgfile2base64(file, function (base64) {
+//       var u = navigator.userAgent.toLowerCase();
+//       var isApple = /(iphone|ipad|ipod|ios)/i.test(u);
+//       var isAndroid = /android/i.test(u);
 
-      console.log(base64)
-      if(isApple) {
-        window.webkit.messageHandlers.printPic.postMessage(base64);
-      } else {
-        Jzyp.printPic(base64)
-      }
-    })
+//       console.log(base64)
+//       if(isApple) {
+//         window.webkit.messageHandlers.printPic.postMessage(base64);
+//       } else {
+//         Jzyp.printPic(base64)
+//       }
+//     })
 
-    });
+//     });
 
 
 
