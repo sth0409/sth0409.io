@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -12,6 +11,7 @@
       margin: 0;
       padding: 0;
     }
+
     #editorContainer {
       padding: 15px;
       /*box-sizing: border-box;*/
@@ -22,13 +22,13 @@
 <div id="editorContainer"></div>
 
 
+</div>  <!--debug-->
+<script src="./imgfile2base64/index.js"></script>
+<script src="https://cdn.bootcss.com/vConsole/3.2.0/vconsole.min.js"></script>
 
-</div>	<!--debug-->
-<script src="./imgfile2base64/index.js"></script>	<script src="https://cdn.bootcss.com/vConsole/3.2.0/vconsole.min.js"></script>
-
-
+<script src="./zx-editor/demo/libs/polyfill.min.js"></script>
 <!--exif获取照片参数插件-->
-<script src="./demo/libs/exif.min.js"></script>
+<script src="./zx-editor/demo/libs/exif.min.js"></script>
 <!--debug-->
 <script src="https://cdn.bootcss.com/vConsole/3.2.0/vconsole.min.js"></script>
 <!--编辑器-->
@@ -41,11 +41,25 @@
     // lineHeight: 1,
     // padding: '0 0 30px',
     // placeholderColor: 'red',
+    customPictureHandler: true,
     cursorColor: 'red'
-  })
 
+  })
+  document.documentElement.addEventListener('touchstart', function (event) {
+    if (event.touches.length > 1) {
+      event.preventDefault();
+    }
+  }, false);
+  var lastTouchEnd = 0;
+  document.documentElement.addEventListener('touchend', function (event) {
+    var now = Date.now();
+    if (now - lastTouchEnd <= 300) {
+      event.preventDefault();
+    }
+    lastTouchEnd = now;
+  }, false);
   // 实例化 VConsole
-  new VConsole()
+  // new VConsole()
 
   // console.log(debug)
 
@@ -75,48 +89,80 @@
     console.log(methodName)
     console.error(e)
   })
-   zxEditor.on('selectPictureInputChange', function (file, ze, e) {
-     console.log(file)
-     var imageOptions = Object.assign({}, zxEditor.options, {
-       width: zxEditor.options.imageMaxWidth
-     });
-
-     imgfile2base64(file, function (base64) {
-       var u = navigator.userAgent.toLowerCase();
-       var isApple = /(iphone|ipad|ipod|ios)/i.test(u);
-       var isAndroid = /android/i.test(u);
-
-       console.log(base64)
-       if(isApple) {
-         window.webkit.messageHandlers.printPic.postMessage(base64);
-       } else {
-         Jzyp.printPic(base64)
-       }
-     })
-
-     });
 
 
 
-  function upPicSuccess(url) {
-    let img = new Image()
-    img.src = url
-    zxEditor.insertElm(img)
+  function upFile(file64, file) {
+    let fd = new FormData()
+    let siId = '64'
+    fd.append('siId', siId)
+    fd.append('base64String', file64)
+    let content = "siId=" + siId + "&base64String=" + file64
+    let xhr = new XMLHttpRequest();
+    console.log(file64)
+    xhr.open('post', "http://110.249.209.202:46999/merchant-product/file/upload-base64", true);
+    // xhr.setRequestHeader('Content-Type', 'multipart/form-data')
+    // xhr.setRequestHeader('Content-Type', 'multipart/form-data')
+    xhr.setRequestHeader('Authorization', 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhdWQiOiJiYTNmMmFkZSIsImlzcyI6IjI0ODkzMTRkNzI3Yjg5OWMiLCJqdGkiOiI0cmh1YzMwIn0.ncAhMImnA64UG0sJMXp4qN9GpZyZEE6IbMEB17-d7LE')
+    xhr.upload.onprogress = function (e) {
+      if (e.lengthComputable) {
+        let percentage = (e.loaded / e.total) * 100;
+      }
+    };
 
+    // xhr.onerror = function(e) {
+    //   console.error('An error occurred while submitting the form. Maybe your file is too big');
+    //   layer.msg('An error occurred while submitting the form. Maybe your file is too big',{time:1500});
+    //   return;
+    // };
+
+    xhr.onload = function () {
+      if (xhr.status === 200) {
+        console.log(xhr)
+        let obj = JSON.parse(xhr.responseText);
+        console.log(obj)
+        if (obj.code == '0000') {
+          console.log(obj.data.url)
+          let img = new Image()
+          img.src = obj.data.url
+          zxEditor.insertElm(img)
+        } else {
+
+        }
+        //showImage(obj.files[0]);
+      } else {
+        console.error('Something went terribly wrong...');
+      }
+    };
+    xhr.send(fd)
   }
 
+  zxEditor.on('selectPictureInputChange', function (file, ze, e) {
+    console.log(file)
 
-  function gethtml() {
+
+    imgfile2base64(file, function (base64) {
+      upFile(base64, file)
+    })
+ 
+  });
+
+  function getHtml() {
     var u = navigator.userAgent.toLowerCase();
     var isApple = /(iphone|ipad|ipod|ios)/i.test(u);
     var isAndroid = /android/i.test(u);
     console.log(zxEditor.getHtml())
-    if(isApple) {
+    if (isApple) {
       window.webkit.messageHandlers.printHtml.postMessage(zxEditor.getHtml());
     } else {
       Jzyp.printHtml(zxEditor.getHtml())
     }
   }
+  
+  function setHtml(html) {
+     zxEditor.setHtml(html)
+  }
+
   zxEditor.on('windowResize', function () {
     console.error('windowResize', window.innerHeight)
   })
